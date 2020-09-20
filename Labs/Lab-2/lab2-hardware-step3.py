@@ -1,15 +1,23 @@
-#using emulator
-import sense_emu
-from sense_emu import SenseHat
+import turtle
 
-sense = SenseHat()
+wn = turtle.Screen()
+t = turtle.Turtle()
 
-green = (0,255,0)
-white = (255,255,255)
+def fwd ():
+    t.forward(20)
+        
+def bkw():
+    t.forward(-20)
+    
+def rt ():
+    t.right(20)
+    
+def lt ():
+    t.left(20)
+        
+wn.onkey(fwd,'Up')
+wn.onkey(bkw,'Down')
+wn.onkey(rt, 'Right')
+wn.onkey(lt, 'Left')
 
-while True:
-    humidity = sense.humidity
-    humidity_value = 64 * humidity / 100
-    pixels= [green if i < humidity_value
-                 else white for i in range(64)]
-    sense.set_pixels(pixels)
+wn.listen()
