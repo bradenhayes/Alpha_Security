@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "146803311397",
+    "firebase_url": "https://alphasecurityapp.firebaseio.com",
+    "project_id": "alphasecurityapp",
+    "storage_bucket": "alphasecurityapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:146803311397:android:05510f0cb54466708910cc",
+        "android_client_info": {
+          "package_name": "com.example.alphasecurityapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "146803311397-ql5669bb8prt1u1uhe94aqqbi449m0ct.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.alphasecurityapp",
+            "certificate_hash": "72da539db47e78632e47d83f7daa0024145609ac"
+          }
+        },
+        {
+          "client_id": "146803311397-n89n6jtf9407bplq9hiik958mi7j26q3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArhZZESInNak7Io_3sy2bVxL8EDCBRWas"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "146803311397-n89n6jtf9407bplq9hiik958mi7j26q3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
