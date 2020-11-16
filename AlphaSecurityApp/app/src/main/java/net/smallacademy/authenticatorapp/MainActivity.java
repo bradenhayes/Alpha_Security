@@ -40,12 +40,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        phone = findViewById(R.id.profilePhone);
-        fullName = findViewById(R.id.profileName);
-        email    = findViewById(R.id.profileEmail);
+        //phone = findViewById(R.id.profilePhone);
+        //fullName = findViewById(R.id.profileName);
+        //email    = findViewById(R.id.profileEmail);
         resetPassLocal = findViewById(R.id.resetPasswordLocal);
 
-        profileImage = findViewById(R.id.profileImage);
+        //profileImage = findViewById(R.id.profileImage);
         changeProfileImage = findViewById(R.id.changeProfile);
 
 
