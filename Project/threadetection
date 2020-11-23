@@ -1,0 +1,144 @@
+import schedule
+import time
+from threading import Thread
+import http.client
+import urllib.parse
+import time
+import requests
+import json
+import sqlite3
+import datetime
+from dateutil import parser
+import pytz
+sounddetected = 0
+soundtime = 0
+laserdetected = 0
+lasertime = 0
+motiondetected = 0
+motiontime = 0
+def determinethreat(): 
+    soundthingspeak = Thread(target=read_sound_thingspeak)
+    soundthingspeak.start()
+    soundthingspeak.join()
+    laserthingspeak = Thread(target=read_laser_thingspeak)
+    laserthingspeak.start()
+    laserthingspeak.join()
+    motionthingspeak = Thread(target=read_motion_thingspeak)
+    motionthingspeak.start()
+    motionthingspeak.join()
+    fullthreatlevel = Thread(target=threatlevel)
+    fullthreatlevel.start()
+    fullthreatlevel.join()
+    
+def threatlevel():
+    global sounddetected 
+    global soundtime 
+    global laserdetected 
+    global lasertime 
+    global motiondetected 
+    global motiontime
+  
+    
+    if laserdetected ==1 and sounddetected ==1 and motiondetected ==1 and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(lasertime)).total_seconds() <60 and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(motiontime)).total_seconds() <60 and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(soundtime)).total_seconds() <60:
+        print("Threat level 3, all sensors have been tripped")
+       
+    
+    elif laserdetected == 1 and sounddetected==1 and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(lasertime)).total_seconds() <60 and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(soundtime)).total_seconds() <60:
+            print("Threat level 2,laser has been broken and soundhas been detected too please listen to most recent audio file")
+       
+    elif motiondetected == 1 and sounddetected==1 and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(motiontime)).total_seconds() <60 and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(soundtime)).total_seconds() <60:
+            print("Threat level 2, motion has been detected and so has sound please listen to most recent audio file")
+          
+    elif motiondetected == 1 and laserdetected==1 and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(motiontime)).total_seconds() <60 and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(lasertime)).total_seconds() <60:
+            print("Threat level 2, motion has been detected and laser has been tripped")
+          
+    elif sounddetected==1 and(datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(soundtime)).total_seconds()<60:
+            print("Threat level 1, sound has been detected please listen to most recent audio file")
+           
+            
+    elif laserdetected==1 and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(lasertime)).total_seconds() <60:
+            print("Threat level 1, tripwire has been broken")
+          
+            
+    elif motiondetected==1 and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(motionsound)).total_seconds() <60:
+            print("Threat level 1, motion has been detected")
+            
+    else:
+        print("you safe homie")
+        
+    
+def read_sound_thingspeak():
+    global sounddetected
+    global soundtime
+    soundURL='https://api.thingspeak.com/channels/1152850/fields/1.json?api_keys='
+    soundKEY='8T5J8V8E0LX16RY5'
+    soundHEADER='&results=1' 
+    sound_FULL=soundURL+soundKEY+soundHEADER
+    soundresults=requests.get(sound_FULL).json()
+    soundURL2='https://api.thingspeak.com/channels/1152850/fields/2.json?api_keys='
+    soundKEY2='8T5J8V8E0LX16RY5'
+    soundHEADER2='&results=1' 
+    sound_FULL2=soundURL2+soundKEY2+soundHEADER2
+    soundresults2=requests.get(sound_FULL2).json()
+    data=[]
+    for x in soundresults['feeds']:
+        data.insert(0,int(x['field1']))
+        print(data[0])
+        sounddetected = data[0]
+        print(sounddetected)
+    for x in soundresults2['feeds']:
+        data.insert(1,str(x['created_at']))
+        print(data[1])
+        soundtime=data[1]
+        
+        
+    
+    
+def read_laser_thingspeak():
+    global laserdetected
+    global lasertime
+    laserKEY='QEAI32EFVL4ZM7ZR'
+    laserURL= 'https://api.thingspeak.com/channels/1150122/fields/1.json?api_key='
+    laserHEADER ='&results=1'
+    laser_FULL = laserURL+laserKEY+laserHEADER
+    laserresults=requests.get(laser_FULL).json()
+    data2=[]
+    for x in laserresults['feeds']:
+        data2.append(int(x['field1']))
+        print(data2[0])
+        laserdetected = data2[0]
+    for x in laserresults['feeds']:
+        data2.insert(1,str(x['created_at']))
+        print(data2[1])
+        lasertime=data2[1]
+        ah=parser.parse(lasertime)
+        print(lasertime)
+        
+    
+def read_motion_thingspeak():
+    global motiondetected
+    global motiontime
+    motionURL='https://api.thingspeak.com/channels/1219425/fields/1.json?api_key='
+    motionKEY='GQ6EDK3P60AS7YLO'
+    motionHEADER='&results=1'
+    motion_FULL=motionURL+motionKEY+motionHEADER
+    motionresults=requests.get(motion_FULL).json()
+    data3=[]
+    for x in motionresults['feeds']:
+        data3.append(int(x['field1']))
+        print(data3[0])
+        motiondetected=data3[0]
+    for x in motionresults['feeds']:
+        data3.insert(1,str(x['created_at']))
+        print(data3[1])
+        motiontime=data3[1]
+    
+    
+schedule.every(5).seconds.do(determinethreat)
+
+
+
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)
