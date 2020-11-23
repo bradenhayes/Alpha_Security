@@ -39,9 +39,9 @@ class StartPage(tk.Frame):
 
     def __init__(self, parent, controller):
         def close():
-            Frame.destroy()
+            controller.destroy()
         tk.Frame.__init__(self,parent)
-        label = tk.Label(self, text="Start Page", font=LARGE_FONT)
+        label = tk.Label(self, text="Alpha Security", font=LARGE_FONT)
         label.pack(pady=10,padx=10)
 
         security = tk.Button(self,
@@ -108,7 +108,7 @@ class VideoPage(tk.Frame):
         label = tk.Label(self, text="Video Page", font=LARGE_FONT)
         label.pack(pady=10,padx=10)
 
-        button1 = tk.Button(self, text="Back to Home",
+        button1 = tk.Button(self, text="Home",
                             command=lambda: controller.show_frame(StartPage))
         button1.pack()
         
@@ -136,3 +136,4 @@ class SensorPage(tk.Frame):
 
 app = SeaofBTCapp()
 app.mainloop()
+
