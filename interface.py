@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import *
+import sqlite3
 
 LARGE_FONT= ("Verdana", 12)
 substatus=1
@@ -219,6 +220,11 @@ class AudioPage(tk.Frame):
 class SensorPage(tk.Frame):
 
     def __init__(self, parent, controller):
+        def query():
+            dbconnect = sqlite3.connect('sensordata.db');
+            cursor = dbconnect.cursor(); #create cursor
+            cursor.execute('SELECT * FROM sensors');
+            dbconnect.close();
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Sensor Page", font=LARGE_FONT)
         label.pack(pady=10,padx=10)
