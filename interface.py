@@ -209,10 +209,16 @@ class VideoPage(tk.Frame):
 class AudioPage(tk.Frame):
 
     def __init__(self, parent, controller):
+        def audioOpen():
+            controller.filename =  filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("mp3 files","*.mp3"),("all files","*.*")))
+        
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Audio Page", font=LARGE_FONT)
         label.pack(pady=10,padx=10)
-
+        
+        audiobutton = tk.Button(self, text="Search Directory",
+                            command= audioOpen)
+        audiobutton.pack()
         button1 = tk.Button(self, text="Home",
                             command=lambda: controller.show_frame(StartPage))
         button1.pack()
