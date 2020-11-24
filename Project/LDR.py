@@ -4,23 +4,21 @@ import time
 import http.client
 import urllib.parse
 
+pin = 14;
+
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(14,GPIO.IN)
+GPIO.setup(pin,GPIO.IN)
 
 key = "FJCOCAFQMNLMO463"
 
 def tripwire():
     if GPIO.input(14) == GPIO.HIGH:
-        print("safe")
+        return
     elif GPIO.input(14) == GPIO.LOW:
-        print (GPIO.input(14))
         print ("Intruder")
-        params = urllib.parse.urlencode({'field1': "intruder", 'key':key }) 
+        params = urllib.parse.urlencode({'field1': 1, 'key':key }) 
         headers = {"Content-typZZe": "application/x-www-form-urlencoded","Accept": "text/plain"}
         conn = http.client.HTTPConnection("api.thingspeak.com:80")
-        start_time = time.time()
-        elapsed_time = time.time() - start_time
-        
         try:
             conn.request("POST", "/update", params, headers)
             response = conn.getresponse()
@@ -29,11 +27,17 @@ def tripwire():
         except:
             print ("connection failed")
 
+def tester():
+    start = time.time()
+    if GPIO.input(14) == GPIO.HIGH and time.time() > 10:
+        return 1
+
 
 
 if __name__ == "__main__":
     while True:
             tripwire()
+            tester()
 
 GPIO.cleanup()
 
