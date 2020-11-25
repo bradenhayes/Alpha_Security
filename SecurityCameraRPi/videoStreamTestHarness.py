@@ -2,6 +2,10 @@
 #SYSC 3010
 #Riley Johnston 101088019
 
+#Software Test
+#Validate the functionality of internetConnection.py
+#This test script verifies that footage is stored locally when internet becomes unavailable
+
 import os
 import subprocess
 import time
@@ -9,9 +13,8 @@ import multiprocessing
 
 def testProcess():
     #internetConnection.py is the script that streams video to AWS when internet is available and saves video to local storage when internet goes down
-    #Call the script.  This is the code under test.
+    #Call the script internetConnection.py.  This is the code under test.
     subprocess.call(["python3", "internetConnection.py"])
-    #subprocess.Popen("internetConnection.py", close_fds=True)
 
 videoTestProcess = multiprocessing.Process(target=testProcess)
 videoTestProcess.start()
