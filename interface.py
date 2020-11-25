@@ -234,6 +234,12 @@ class SensorPage(tk.Frame):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Sensor Page", font=LARGE_FONT)
         label.pack(pady=10,padx=10)
+        
+        sensorbutton = tk.Button(self, text="See Sensor History",
+                            command= query,
+                                 width = 25,
+                                 height = 5)
+        sensorbutton.pack()
 
         button1 = tk.Button(self, text="Home",
                             command=lambda: controller.show_frame(StartPage))
