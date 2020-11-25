@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import *
 import sqlite3
+import os
+import dropbox
 
 LARGE_FONT= ("Verdana", 12)
 substatus=1
@@ -180,7 +182,6 @@ class SubscriptionPage(tk.Frame):
             ConfirmButton=tk.Button(self, text="Confirm",
                                 command=lambda: self.controller.show_frame(SecurityPage))
             ConfirmButton.destroy()
-
     def callback2(self):
         if self.motionvar.get()==1:
             ConfirmButton=tk.Button(self, text="Confirm",
@@ -209,16 +210,27 @@ class VideoPage(tk.Frame):
 class AudioPage(tk.Frame):
 
     def __init__(self, parent, controller):
-        def audioOpen():
-            controller.filename =  filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("mp3 files","*.mp3"),("all files","*.*")))
         
+            
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Audio Page", font=LARGE_FONT)
         label.pack(pady=10,padx=10)
-        
+        def audioOpen():
+            dbx = dropbox.Dropbox('8WNB4VteJFUAAAAAAAAAAQkkCfn_aeDYNxNuE2p8sIRNh5fWyWuZhLSqwXT5UZ2p')
+            entries = dbx.files_list_folder('').entries
+
+            for entry in entries:
+                if isinstance(entry, dropbox.files.FileMetadata):  # this entry is a file
+                    metadata,f = dbx.files_download(entry.path_lower)
+                    out=open(entry.name,'wb')
+                    out.write(f.content)
+            
+            controller.filename =  filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("mp3 files",".mp3"),("all files",".*")))
         audiobutton = tk.Button(self, text="Search Directory",
                             command= audioOpen)
         audiobutton.pack()
+       
+        
         button1 = tk.Button(self, text="Home",
                             command=lambda: controller.show_frame(StartPage))
         button1.pack()
