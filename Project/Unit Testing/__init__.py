@@ -34,7 +34,7 @@ def testusbmic():
             return 1
 
 
-    os.remove("/home/pi/Desktop/Sysc3010/Project/AudioFiles/Audio_files/test.mp3")
+    os.remove("/home/pi/Desktop/Sysc3010/Project/AudioFiles/test.mp3")
 
 
 
