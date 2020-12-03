@@ -17,15 +17,12 @@ stream_running_g = False
 
 def startStream():
     #stream video from raspberry pi camera to the AWS Kinesis streaming server  
-    try:
-        streamPID = os.getpid()
-        print("stream PID: " + str(streamPID))
-        print("LAUNCHING STREAM")
-        #Initiate the video stream to AWS
-        #This beings delivery of the video taken by the local raspberry pi camera through a gstreamer pipeline to a kvssink where it connects to the AWS Kinesis SDK for upload to the server
-        subprocess.run("gst-launch-1.0 v4l2src do-timestamp=TRUE device=/dev/video0 ! videoconvert ! video/x-raw,format=I420,width=640,height=480,framerate=30/1 ! omxh264enc control-rate=1 target-bitrate=5120000 periodicity-idr=45 inline-header=FALSE ! h264parse ! video/x-h264,stream-format=avc,alignment=au,width=640,height=480,framerate=30/1,profile=baseline ! kvssink stream-name='SecurityCamera' access-key='AKIAVMRNWFLTQ7RTPWOQ' secret-key='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' aws-region='us-east-2'", shell=True)
-    except:
-        print("error detected")
+    streamPID = os.getpid()
+    print("stream PID: " + str(streamPID))
+    print("LAUNCHING STREAM")
+    #Initiate the video stream to AWS
+    #This beings delivery of the video taken by the local raspberry pi camera through a gstreamer pipeline to a kvssink where it connects to the AWS Kinesis SDK for upload to the server
+    subprocess.Popen(["bash", "startStream.sh"])
 
 def killTargetProcess(target_process):
     #Kill a process by name
@@ -83,6 +80,6 @@ camera = picamera.PiCamera()
 #Launch the video streaming process
 videoStreamProcess = multiprocessing.Process(target=startStream)
 videoStreamProcess.start()
-
+#startStream()
 #From the main process, monitor the internet connection
 checkInternetConnection()
