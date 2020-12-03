@@ -134,5 +134,12 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-
+    ThingSpeakChannel tsChannel = new ThingSpeakChannel(CHANNEL_ID);
+    tsChannel.setChannelFeedUpdateListener(new ThingSpeakChannel.ChannelFeedUpdateListener() {
+        @Override
+        public void onChannelFeedUpdated(long channelId, String channelName, ChannelFeed channelFeed) {
+            // Make use of your Channel feed here!
+        }
+    });
+tsChannel.loadChannelFeed();
 }
