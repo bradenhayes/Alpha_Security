@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/walpaper"
     tools:context=".MainActivity">
 
 
@@ -81,6 +82,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:onClick="viewLiveStream"
         android:text="View Security Camera Live Stream"
         app:layout_constraintBottom_toBottomOf="@+id/resetPasswordLocal"
         app:layout_constraintEnd_toEndOf="parent"

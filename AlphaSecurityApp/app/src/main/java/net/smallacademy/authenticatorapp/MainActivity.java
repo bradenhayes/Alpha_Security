@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.smallacademy.authenticatorapp.Login;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         userId = fAuth.getCurrentUser().getUid();
-         user = fAuth.getCurrentUser();
+        user = fAuth.getCurrentUser();
 
         if(!user.isEmailVerified()){
             verifyMsg.setVisibility(View.VISIBLE);
@@ -101,12 +102,12 @@ public class MainActivity extends AppCompatActivity {
                         user.updatePassword(newPassword).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                Toast.makeText(MainActivity.this, "Password Reset Successfully.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(net.smallacademy.authenticatorapp.MainActivity.this, "Password Reset Successfully.", Toast.LENGTH_SHORT).show();
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(MainActivity.this, "Password Reset Failed.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(net.smallacademy.authenticatorapp.MainActivity.this, "Password Reset Failed.", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -115,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                 passwordResetDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                       // close
+                        // close
                     }
                 });
 
@@ -126,7 +127,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
+    public void viewLiveStream(View view) {
+        startActivity(new Intent(getApplicationContext(),VideoStream.class));
+        finish();
+    }
 
     public void logout(View view) {
         FirebaseAuth.getInstance().signOut();//logout

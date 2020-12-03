@@ -3,6 +3,7 @@ from tkinter import *
 import sqlite3
 import os
 import dropbox
+import webbrowser
 
 LARGE_FONT= ("Verdana", 12)
 substatus=1
@@ -199,9 +200,11 @@ class SubscriptionPage(tk.Frame):
 class VideoPage(tk.Frame):
 
     def __init__(self, parent, controller):
-       def Stream():
-            webbrowser.open_new(r"http://www.google.com")
-            
+        
+        def Stream():
+            print("2")
+            webbrowser.open_new(r"index.html")
+            print("1")
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Video Page", font=LARGE_FONT)
         label.pack(pady=10,padx=10)
