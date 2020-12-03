@@ -134,12 +134,37 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    ThingSpeakChannel tsChannel = new ThingSpeakChannel(CHANNEL_ID);
-    tsChannel.setChannelFeedUpdateListener(new ThingSpeakChannel.ChannelFeedUpdateListener() {
+
+
+
+
+    ThingSpeakChannel motionChannel = new ThingSpeakChannel(1219425, GQ6EDK3P60AS7YLO);
+    motionChannel.setChannelFeedUpdateListener(new ThingSpeakChannel.ChannelFeedUpdateListener() {
         @Override
         public void onChannelFeedUpdated(long channelId, String channelName, ChannelFeed channelFeed) {
             // Make use of your Channel feed here!
         }
     });
-tsChannel.loadChannelFeed();
+
+    motionChannel.loadChannelFeed();
+
+    ThingSpeakChannel tripwireChannel = new ThingSpeakChannel(1150122, QEAI32EFVL4ZM7ZR);
+    mtripwireChannel.setChannelFeedUpdateListener(new ThingSpeakChannel.ChannelFeedUpdateListener() {
+        @Override
+        public void onChannelFeedUpdated(long channelId, String channelName, ChannelFeed channelFeed) {
+            // Make use of your Channel feed here!
+        }
+    });
+
+    tripwireChannel.loadChannelFeed();
+
+    ThingSpeakChannel soundChannel = new ThingSpeakChannel(1152850, 8T5J8V8E0LX16RY5);
+    soundChannel.setChannelFeedUpdateListener(new ThingSpeakChannel.ChannelFeedUpdateListener() {
+        @Override
+        public void onChannelFeedUpdated(long channelId, String channelName, ChannelFeed channelFeed) {
+            // Make use of your Channel feed here!
+        }
+    });
+
+    soundChannel.loadChannelFeed();
 }
