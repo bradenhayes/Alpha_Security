@@ -9,7 +9,7 @@ import pygame
 import vlc
 from pydub import AudioSegment
 from pydub.playback import play
-
+"hehe"
 LARGE_FONT= ("Verdana", 12)
 class AlphaSecurity(tk.Tk):
 
@@ -30,7 +30,7 @@ class AlphaSecurity(tk.Tk):
             frame = F(container, self)
 
             self.frames[F] = frame
-
+            
             frame.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame(StartPage)
