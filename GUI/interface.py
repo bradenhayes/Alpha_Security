@@ -1,13 +1,17 @@
 import tkinter as tk
 from tkinter import *
+from tkinter import Tk, BOTH, messagebox
 import sqlite3
 import os
 import dropbox
 import webbrowser
+import pygame
+import vlc
+from pydub import AudioSegment
+from pydub.playback import play
 
 LARGE_FONT= ("Verdana", 12)
-substatus=1
-
+check ='i'
 class AlphaSecurity(tk.Tk):
 
     def __init__(self, *args, **kwargs):
@@ -141,14 +145,6 @@ class SubscriptionPage(tk.Frame):
         self.motionvar=IntVar()
         self.laservar=IntVar()
         self.varr=IntVar()
-        '''cameracheck=tk.Checkbutton(self,text="Camera package",variable=self.cameravar,command=self.callback)
-        cameracheck.pack()
-        soundcheck=tk.Checkbutton(self,text="Sound Security Package",variable=self.soundvar,command=self.callback)
-        soundcheck.pack()
-        motioncheck=tk.Checkbutton(self,text="Motion Detection Package",variable=self.motionvar,command=self.callback)
-        motioncheck.pack()
-        lasercheck=tk.Checkbutton(self,text="Laser Tripwire Package",variable=self.laservar,command=self.callback)
-        lasercheck.pack()'''
         fullbutt=Radiobutton(self,text="Complete Package (Tripwire, Sound security, Motion detection and camera)",variable=self.varr,value=0,command= self.callbackfull)
         halfbutt=Radiobutton(self,text="Camera Package",variable=self.varr,value=1,command= self.callbackcamera)
         fullbutt.pack()
@@ -169,33 +165,7 @@ class SubscriptionPage(tk.Frame):
         self.DowngradeButton.pack()
         
         
-        
-    
-    '''def callback(self):
-        if self.soundvar.get()==1 and self.cameravar.get()==1 and self.motionvar.get()==1:
-            
-            ConfirmButton=tk.Button(self, text="Confirm",
-                                command=lambda: self.controller.show_frame(SecurityPage))
-            ConfirmButton.pack()
-            
-    def callback1(self):
-        if self.soundvar.get()==1:
-            ConfirmButton=tk.Button(self, text="Confirm",
-                                command=lambda: self.controller.show_frame(SecurityPage))
-            ConfirmButton.destroy()
-    def callback2(self):
-        if self.motionvar.get()==1:
-            ConfirmButton=tk.Button(self, text="Confirm",
-                                command=lambda: self.controller.show_frame(SecurityPage))
-            ConfirmButton.destroy()    
-    def callback3(self):
-        if self.laservar.get()==1:
-            ConfirmButton=tk.Button(self, text="Confirm",
-                                command=lambda: self.controller.show_frame(SecurityPage))
-            ConfirmButton.pack()    
-  
-       ''' 
-            
+
 
 class VideoPage(tk.Frame):
 
@@ -218,12 +188,14 @@ class VideoPage(tk.Frame):
 class AudioPage(tk.Frame):
 
     def __init__(self, parent, controller):
-        
             
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Audio Page", font=LARGE_FONT)
         label.pack(pady=10,padx=10)
         def audioOpen():
+            global check
+            pygame.mixer.init()
+          
             dbx = dropbox.Dropbox('8WNB4VteJFUAAAAAAAAAAQkkCfn_aeDYNxNuE2p8sIRNh5fWyWuZhLSqwXT5UZ2p')
             entries = dbx.files_list_folder('').entries
 
@@ -232,10 +204,27 @@ class AudioPage(tk.Frame):
                     metadata,f = dbx.files_download(entry.path_lower)
                     out=open(entry.name,'wb')
                     out.write(f.content)
+            for root, dirs, files in(os.walk("/home/pi/Desktop/Sysc3010/Project/AudioFiles")):
+                    files.sort()
+                    for file in files:
+                        if file.endswith(".mp3"):
+                            f = open(os.path.join(root,file),'rb')
+                            filebutton = tk.Button(self, text=os.path.basename(f.name),
+                                command=lambda file=file: play_audio(file))
+                            filebutton.pack()
+        def play_audio(file):
+            global check
+            messagebox.showinfo("Button label", file)
+            recording= AudioSegment.from_file('/home/pi/Desktop/Sysc3010/Project/AudioFiles/' + str(file))
+            loud_recording = recording +500
+            play(loud_recording)
+            #pygame.mixer.music.load(loud_recording)
+            #pygame.mixer.music.play(loops=0)
             
-            controller.filename =  filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("mp3 files",".mp3"),("all files",".*")))
+            
+            
         audiobutton = tk.Button(self, text="Search Directory",
-                            command= audioOpen)
+                            command=audioOpen)
         audiobutton.pack()
        
         
@@ -246,11 +235,16 @@ class AudioPage(tk.Frame):
 class SensorPage(tk.Frame):
 
     def __init__(self, parent, controller):
-        def query():
-            dbconnect = sqlite3.connect('sensordata.db');
-            cursor = dbconnect.cursor(); #create cursor
-            cursor.execute('SELECT * FROM sensors');
-            dbconnect.close();
+        def query(verbose=True):
+            db_path = '/home/pi/Desktop/Sysc3010/Project/sensordata.db'
+            conn = sqlite3.connect(db_path)
+            c = conn.cursor()
+            sql = "SELECT * FROM motionsensordata"
+            recs = c.execute(sql)
+            if verbose:
+                for row in recs:
+                    print (row)
+            c.close()
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Sensor Page", font=LARGE_FONT)
         label.pack(pady=10,padx=10)
