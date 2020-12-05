@@ -11,7 +11,6 @@ from pydub import AudioSegment
 from pydub.playback import play
 
 LARGE_FONT= ("Verdana", 12)
-check ='i'
 class AlphaSecurity(tk.Tk):
 
     def __init__(self, *args, **kwargs):
@@ -235,25 +234,56 @@ class AudioPage(tk.Frame):
 class SensorPage(tk.Frame):
 
     def __init__(self, parent, controller):
-        def query(verbose=True):
+        def querymotion(verbose=True):
             db_path = '/home/pi/Desktop/Sysc3010/Project/sensordata.db'
             conn = sqlite3.connect(db_path)
             c = conn.cursor()
             sql = "SELECT * FROM motionsensordata"
             recs = c.execute(sql)
+            showdata=""
             if verbose:
                 for row in recs:
-                    print (row)
+                    showdata+=str(row)+ "\n"
+            messagebox.showinfo(title="Sound Sensor History",message=showdata)    
+            c.close()
+        def querysound(verbose=True):
+            db_path = '/home/pi/Desktop/Sysc3010/Project/sensordata.db'
+            conn = sqlite3.connect(db_path)
+            c = conn.cursor()
+            sql = "SELECT * FROM soundsensordata"
+            recs = c.execute(sql)
+            showdata=""
+            if verbose:
+                for row in recs:
+                    showdata+=str(row)+ "\n"
+            messagebox.showinfo(title="Sound Sensor History",message=showdata)        
+            c.close()
+        def querylaser(verbose=True):
+            db_path = '/home/pi/Desktop/Sysc3010/Project/sensordata.db'
+            conn = sqlite3.connect(db_path)
+            c = conn.cursor()
+            sql = "SELECT * FROM lasersensordata"
+            recs = c.execute(sql)
+            showdata=''
+            if verbose:
+                for row in recs:
+                    showdata+=str(row)+ "\n"
+            messagebox.showinfo(title="Laser Tripwire Sensor History",message=showdata)
             c.close()
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Sensor Page", font=LARGE_FONT)
         label.pack(pady=10,padx=10)
         
-        sensorbutton = tk.Button(self, text="See Sensor History",
-                            command= query,
-                                 width = 25,
-                                 height = 5)
+        sensorbutton = tk.Button(self, text="See Motion Sensor History",
+                            command= querymotion)
+                            
         sensorbutton.pack()
+        sensorbutton2 = tk.Button(self, text="See Sound Sensor History",
+                            command= querysound)
+        sensorbutton2.pack()
+        sensorbutton3 = tk.Button(self, text="See Laser Tripwire Sensor History",
+                            command= querylaser)
+        sensorbutton3.pack()
 
         button1 = tk.Button(self, text="Home",
                             command=lambda: controller.show_frame(StartPage))
