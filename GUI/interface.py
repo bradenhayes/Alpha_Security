@@ -1,7 +1,6 @@
 try: 
     import tkinter as tk
     from tkinter import *
-    from tkinter import Tk, BOTH, messagebox
     import sqlite3
     import os
     import dropbox
@@ -17,7 +16,6 @@ try:
     import time
     import requests
     import json
-    import sqlite3
     import datetime
     from dateutil import parser
     import pytz
@@ -28,6 +26,7 @@ except ImportError:
     
 LARGE_FONT= ("Verdana", 12) #font used throughout GUI
 ONE_MINUTE=60 #used to compare the time the sensors are tripped to the current time (60 seconds/1 minute)
+TWO_MINUTES=120 #used for comparing time to sensors that are tripped  (120 seconds/2 minutes)
 CURRENT_STATUS="Safe" #current status of the secruity system
 client = Client("ACc5accf5415ccf8712a3bd81278c7e57b", "8fa188fa711e78ce76ce8944efb86af9") #used to connect to Twilio API to send SMS messages
 
@@ -141,19 +140,22 @@ class SecurityPage(tk.Frame):
         label = tk.Label(self, text="Security Page", font=LARGE_FONT) #label for the title of page "Security Page"
         label.pack(pady=10,padx=10)
 
+     
+        button2 =tk.Button(self,text="Click to get security status",command=self.statuscallback) #this button will call statuscallback and will give the security status of the security system
+        button2.pack()#activates button2
         button1 = tk.Button(self, text="Home",
                             command=lambda: controller.show_frame(StartPage)) #button to go back home to the startpage of the GUI
         button1.pack() #activates button1
-        button2 =tk.Button(self,text="Click to get security status",command=self.statuscallback) #this button will call statuscallback and will give the security status of the security system
-        button2.pack()#activates button2
     #def,popupError this is called whenever there is new sensor activity
     #@param s, this is what will be passed to popupError and it is the current status of the security system
     def popupError(s):
+        
+        
             popupRoot = Tk() #defining object popupRoot
-            popupRoot.after(2000, exit)#after 2000 milliseconds/200 seconds the notification window will go away
-            popupButton = Button(popupRoot, text = s, font = ("Verdana", 12), command = exit) #defining the popupbutton for notifications
+            popupRoot.after(5000, popupRoot.destroy)#after 2000 milliseconds/200 seconds the notification window will go away
+            popupButton = Button(popupRoot, text = s, font = ("Verdana", 12)) #defining the popupbutton for notifications
             popupButton.pack() #activate the popupbutton
-            popupRoot.geometry('400x50+700+500') #define the size of it
+            popupRoot.geometry('400x50+700+500') #define location on the screen of popup
             popupRoot.mainloop()
     #def statuscallback, this will be called whenever the button to get the security status is pressed and will give the user the current status of the security system in a messagebox
     def statuscallback(self):
@@ -238,365 +240,397 @@ class VideoPage(tk.Frame):
         button1 = tk.Button(self, text="Home",
                             command=lambda: controller.show_frame(StartPage))#activates button that if clicked will bring the user to the home page of the GUI
         button1.pack()#activates this button
-        
+'''class AudioPage, this is where all of the code for the Audio page for the GUI will be
+    @param tk.Frame, this is the frame for the GUI that everything is within'''
 class AudioPage(tk.Frame):
 
     def __init__(self, parent, controller):
             
-        tk.Frame.__init__(self, parent)
-        label = tk.Label(self, text="Audio Page", font=LARGE_FONT)
-        label.pack(pady=10,padx=10)
+        tk.Frame.__init__(self, parent) ##sets up the frame for the page
+        label = tk.Label(self, text="Audio Page", font=LARGE_FONT)#label at the top of the page, this sets it up
+        label.pack(pady=10,padx=10)#activates label
+        #def audioOpen, this is the definition to grab all the audio files from the dropbox app and put them into a file on this raspberry pi, it then makes a button for every individual file with the same name as the file
         def audioOpen():
             try:
-                  dbx = dropbox.Dropbox('8WNB4VteJFUAAAAAAAAAAQkkCfn_aeDYNxNuE2p8sIRNh5fWyWuZhLSqwXT5UZ2p')
-                  entries = dbx.files_list_folder('').entries
+                  dbx = dropbox.Dropbox('8WNB4VteJFUAAAAAAAAAAQkkCfn_aeDYNxNuE2p8sIRNh5fWyWuZhLSqwXT5UZ2p') #this the the API code for the dropbox app
+                  entries = dbx.files_list_folder('').entries#put every one into a variable
             except:
-                  print("Connection to dropbox error")
+                  print("Connection to dropbox error") #if connection above to dropbox failed print this error
 
             for entry in entries:
-                if isinstance(entry, dropbox.files.FileMetadata):  
+                if isinstance(entry, dropbox.files.FileMetadata):  #an instance in the entries for the file meta data
                     metadata,f = dbx.files_download(entry.path_lower)
                     out=open(entry.name,'wb')
-                    out.write(f.content)
-            for root, dirs, files in(os.walk("/home/pi/Desktop/Sysc3010/Project/AudioFiles")):
-                    files.sort()
+                    out.write(f.content) #writes every audio file grabbed from dropbox into the same folder that this code is in
+            for root, dirs, files in(os.walk("/home/pi/Desktop/Sysc3010/Project/AudioFiles")): #look in this file for 
+                    files.sort() #this will sort the files so that they are put in the order of latest to soonest
                     for file in files:
-                        if file.endswith(".mp3"):
-                            f = open(os.path.join(root,file),'rb')
+                        if file.endswith(".mp3"): #looks to see if the code ends in .mp3 before it turns it into a button to make sure only the audio files are used
+                            f = open(os.path.join(root,file),'rb') #if it is, its saves it as a f object
                             filebutton = tk.Button(self, text=os.path.basename(f.name),
-                                command=lambda file=file: play_audio(file))
-                            filebutton.pack()
-        def play_audio(file):
-            messagebox.showinfo("Button label", file)
-            recording= AudioSegment.from_file('/home/pi/Desktop/Sysc3010/Project/AudioFiles/' + str(file))
-            loud_recording = recording +500
-            play(loud_recording)
+                                command=lambda file=file: play_audio(file)) #this turns every file into its own button and calls play_audio
+                            filebutton.pack() #activates filebutton button
+                            
+        #def play_audio, this will play the audio that is dedicated to that button                 
+        def play_audio(file):  
+            messagebox.showinfo("", "Playing Audio") #this will pop up to let the user know the audio is playing
+            recording= AudioSegment.from_file('/home/pi/Desktop/Sysc3010/Project/AudioFiles/' + str(file)) #will go into the folder that has all of the audio files and then will grab the correct one as "str(file))" will be the name of the file the user wants
+            loud_recording = recording +500 #increases the volume of the audio file
+            play(loud_recording) #will play this recording
             
             
             
         audiobutton = tk.Button(self, text="Search Directory",
-                            command=audioOpen)
-        audiobutton.pack()
+                            command=audioOpen) #button for search directory, will call audioOpen method
+        audiobutton.pack()#activates this button
        
         
         button1 = tk.Button(self, text="Home",
-                            command=lambda: controller.show_frame(StartPage))
-        button1.pack()
-        
+                            command=lambda: controller.show_frame(StartPage))#button that if clicked will bring the user back to the start page
+        button1.pack()#activates this button
+'''class SensorPage, this is where the code for the sensor history page will be
+    @param tk.Frame, this is the frame for the GUI that everything is within'''
 class SensorPage(tk.Frame):
 
     def __init__(self, parent, controller):
+        #def querymotion, this will get all of the sensor data from the motionsensordata chart
+        #@param verbose, this is a veriable that is used as a boolean
         def querymotion(verbose=True):
-            showdata=""
+            showdata="" #empty string variable that is used to put the sensor data into
             try:
-                db_path = '/home/pi/Desktop/Sysc3010/Project/sensordata.db'
-                conn = sqlite3.connect(db_path)
-                c = conn.cursor()
-                sql = "SELECT * FROM motionsensordata"
+                db_path = '/home/pi/Desktop/Sysc3010/Project/sensordata.db' #this is the database where the table is stored
+                conn = sqlite3.connect(db_path) #connect to the path and makes it an object conn
+                c = conn.cursor() 
+                sql = "SELECT * FROM motionsensordata" #selects data from motionsensordata chart
                 recs = c.execute(sql)
             except:
-                print("connection to database failed")
+                print("connection to database failed") #if connection to database fails then print this
     
             if verbose:
                 for row in recs:
-                    showdata+=str(row)+ "\n"
-            messagebox.showinfo(title="Sound Sensor History",message=showdata)    
-            c.close()
+                    showdata+=str(row)+ "\n" #will add the sensor history for each row into this variable and then go to the next line
+            messagebox.showinfo(title="Motion Sensor History",message=showdata)  #message box that will show all of the motion sensor history 
+            c.close() #close the database 
+        #def querysound, this will get all of the sensor data from the soundsensordata chart
+        #@param verbose, this is a veriable that is used as a boolean
         def querysound(verbose=True):
-            showdata=""
+            showdata="" #empty string variable that is used to put the sensor data into
             try:
-                db_path = '/home/pi/Desktop/Sysc3010/Project/sensordata.db'
-                conn = sqlite3.connect(db_path)
+                db_path = '/home/pi/Desktop/Sysc3010/Project/sensordata.db' #this is the database where the table is stored
+                conn = sqlite3.connect(db_path) #connects to the path and makes it an object conn
                 c = conn.cursor()
-                sql = "SELECT * FROM soundsensordata"
+                sql = "SELECT * FROM soundsensordata" #selects data from soundsensordata chart
                 recs = c.execute(sql)
             except:
-                print("connection to database failed")
+                print("connection to database failed") #if connection to database fails then print this
             if verbose:
                 for row in recs:
-                    showdata+=str(row)+ "\n"
-            messagebox.showinfo(title="Sound Sensor History",message=showdata)        
-            c.close()
+                    showdata+=str(row)+ "\n" #will add the sensor history for each row into this variable and then go to the next line
+            messagebox.showinfo(title="Sound Sensor History",message=showdata) #message box that will show all of the sound sensor history  
+            c.close() #close the database
+        #def querylaser, this will get all of the sensor data from the lasersensordata chart
+        #@param verbose, this is a veriable that is used as a boolean   
         def querylaser(verbose=True):
-            showdata=""
+            showdata="" #empty string variable that is used to put the sensor data into
             try:
-                db_path = '/home/pi/Desktop/Sysc3010/Project/sensordata.db'
-                conn = sqlite3.connect(db_path)
+                db_path = '/home/pi/Desktop/Sysc3010/Project/sensordata.db' #this is the database where the table is stored
+                conn = sqlite3.connect(db_path) #connects to the path and makes it an object conn
                 c = conn.cursor()
-                sql = "SELECT * FROM lasersensordata"
+                sql = "SELECT * FROM lasersensordata" #selects data from lasersensordata chart
                 recs = c.execute(sql)
             except:
-                print("connection to datbase failed")
+                print("connection to datbase failed") #if connection to database fails the print this
            
             if verbose:
                 for row in recs:
-                    showdata+=str(row)+ "\n"
+                    showdata+=str(row)+ "\n" #will add the sensor history for each row into this variable and then go to the next line
             messagebox.showinfo(title="Laser Tripwire Sensor History",message=showdata)
             c.close()
-        tk.Frame.__init__(self, parent)
-        label = tk.Label(self, text="Sensor Page", font=LARGE_FONT)
-        label.pack(pady=10,padx=10)
+        tk.Frame.__init__(self, parent) #frame for this page
+        label = tk.Label(self, text="Sensor Page", font=LARGE_FONT) #this is the label for the top of the page
+        label.pack(pady=10,padx=10) #activates label
         
         sensorbutton = tk.Button(self, text="See Motion Sensor History",
-                            command= querymotion)
+                            command= querymotion) #button for motion sensor history, if clicked calls querymotion
                             
-        sensorbutton.pack()
+        sensorbutton.pack() #activates button
         sensorbutton2 = tk.Button(self, text="See Sound Sensor History",
-                            command= querysound)
-        sensorbutton2.pack()
+                            command= querysound) #button for sound sensor history, if clicked calls querysound
+        sensorbutton2.pack() #activates button
         sensorbutton3 = tk.Button(self, text="See Laser Tripwire Sensor History",
-                            command= querylaser)
-        sensorbutton3.pack()
+                            command= querylaser) #button for laser sensor histroy, if clicked calls querylaser
+        sensorbutton3.pack() #activates button
 
         button1 = tk.Button(self, text="Home",
-                            command=lambda: controller.show_frame(StartPage))
-        button1.pack()
+                            command=lambda: controller.show_frame(StartPage)) #button for home, if clicked brings user back to start page
+        button1.pack() #activates button
+'''class threatdetect, this class determine the level of threat of the security system based on the sensors'''
 class threatdetect:
-
+    #def __init__, initializes all of the variables used within this class
+    #@param self, allows the variables to be used throughout all method, and will maintain their values and not be reset
     def __init__(self):
-        self.sounddetected=0
-        self.soundtime=0
-        self.laserdetected=0
-        self.lasertime=0
-        self.motiondetected=0
-        self.motiontime=0
+        self.sounddetected=0 #initializes to zero as no sound has been detected
+        self.soundtime=0 #initializes to zero as no sound has been detected
+        self.laserdetected=0 #initializes to zero as laser has not been tripped
+        self.lasertime=0 #initializes to zero as laser has not been tripped
+        self.motiondetected=0 #initializes to zero as no motion has been detected
+        self.motiontime=0 #initializes to zero as no motion has been detected
         
-
-    def determinethreat(self): #This method is the multithreading to run the methods all together
-        f=threatdetect()
-        soundthingspeak = Thread(target=f.read_sound_thingspeak)
-        soundthingspeak.start()
+    #def determinethreat, this method is for multithreading in order to run all of the methods together
+    #@param self, used to be able to use variables associated with this object
+    def determinethreat(self): 
+        f=threatdetect() #create an object f
+        soundthingspeak = Thread(target=f.read_sound_thingspeak) #create threading for sound method
+        soundthingspeak.start()#start this threading
         soundthingspeak.join()
-        laserthingspeak = Thread(target=f.read_laser_thingspeak)
-        laserthingspeak.start()
+        laserthingspeak = Thread(target=f.read_laser_thingspeak) #create threading for laser method
+        laserthingspeak.start()#start this threading
         laserthingspeak.join()
-        motionthingspeak = Thread(target=f.read_motion_thingspeak)
-        motionthingspeak.start()
+        motionthingspeak = Thread(target=f.read_motion_thingspeak) #create threading for motion method
+        motionthingspeak.start()#start this threading
         motionthingspeak.join()
-        fullthreatlevel = Thread(target=f.threatlevel)
-        fullthreatlevel.start()
+        fullthreatlevel = Thread(target=f.threatlevel) #create threading for threatlevel method
+        fullthreatlevel.start()#start this thread
         fullthreatlevel.join()
-        app.after(5000,ah.determinethreat)
+        app.after(5000,ah.determinethreat) #will run this method again every 5000 milliseconds/5 seconds, to always check if sensors have been tripped
+        
+    #def threatlevel, this method determines the level of threat for the security system by comparing sensor inputs and the current time to the time the sensors were tripped at
+    #@param self, used to be able to use variables associated with this object
     def threatlevel(self):
-        global CURRENT_STATUS
+        global CURRENT_STATUS #this is to monitor the current status of the security system as a string (which sensors have been tripped)
        
         '''The below code goes through all the possibilities for threat levels for sensors, it will compare the time that the sensor was tripped to the
             current time to determine if the sensor was recently tripped or if it just grabbed an old reading'''
-    
+        #the following if statement will check if all 3 of the sensors have been tripped and if they have all been tripped within the last 60 seconds
         if self.laserdetected ==1 and self.sounddetected ==1 and self.motiondetected ==1 and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(self.lasertime)).total_seconds() <ONE_MINUTE and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(self.motiontime)).total_seconds() <ONE_MINUTE and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(self.soundtime)).total_seconds() <ONE_MINUTE:
-               if (CURRENT_STATUS== "Threat level 3, all sensors tripped"):
-                   return
+               if (CURRENT_STATUS== "Threat level 3, all sensors tripped"): #this if statement just makes sure that notifications are not spammed
+                   return #return nothing
                else:
-                    CURRENT_STATUS= "Threat level 3, all sensors tripped"
-                    ahh.popupError("Threat level 3")
+                    CURRENT_STATUS= "Threat level 3, all sensors tripped" # all sensors have indeed been tripped
+                    
                     try:
                         client.messages.create(to="+16475295580", 
                            from_="+14158554536", 
-                           body="Threat level 3, all sensors tripped")
+                           body="Threat level 3, all sensors tripped") #this will send a text message notification if all sensos have been tripped
                     except:
-                        print("sms failed to send")
-                
+                        print("sms failed to send") #if sms failed to send print
+                    ahh.popupError("Threat level 3") #popup notification if all sensors have been tripped
        
-    
+        #the following elif statement will check if both the laser has been broken and sound have been detected and if they have both happened within the last minute
         elif self.laserdetected == 1 and self.sounddetected==1 and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(self.lasertime)).total_seconds() <ONE_MINUTE and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(self.soundtime)).total_seconds() <ONE_MINUTE:
-                if(CURRENT_STATUS== "Threat level 2,laser has been broken and sound has been detected too please listen to most recent audio file"):
-                    return
+                if(CURRENT_STATUS== "Threat level 2,laser has been broken and sound has been detected too please listen to most recent audio file"): #this if statement just makes sure notifications are not spammed
+                    return #return nothing
+                elif (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(self.motiontime)).total_seconds() <TWO_MINUTES: #this elif just makes sure that once one sensor is out of the 60 second range but the other isnt, that it does not change the threat level
+                    return #return nothing
                 else:
-                    CURRENT_STATUS= "Threat level 2,laser has been broken and sound has been detected too please listen to most recent audio file"
-                    ahh.popupError("Threat level 2, laser has been broken and sound has been detected")
+                    CURRENT_STATUS= "Threat level 2,laser has been broken and sound has been detected too please listen to most recent audio file" #if both the sensors have been tripped then update current status
+                    
                     try:
                         client.messages.create(to="+16475295580", 
                            from_="+14158554536", 
-                           body="Threat level 2, laser has been broken and sound has been detected")
+                           body="Threat level 2, laser has been broken and sound has been detected") #this will send an SMS notification 
                     except:
-                        print("sms failed to send")
+                        print("sms failed to send") #if sms failed to send print
+                    ahh.popupError("Threat level 2, laser has been broken and sound has been detected") #will give a popup notification
+        #the following elif statement will check if both the motion sensor and sound sensor have been tripped               
         elif self.motiondetected == 1 and self.sounddetected==1 and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(self.motiontime)).total_seconds() <ONE_MINUTE and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(self.soundtime)).total_seconds() <ONE_MINUTE:
-                if(CURRENT_STATUS=="Threat level 2, motion has been detected and so has sound please listen to most recent audio file"):
-                    return
+                if(CURRENT_STATUS=="Threat level 2, motion has been detected and so has sound please listen to most recent audio file"): #this if statement just makes sure notifications are not spammed
+                    return #return nothing
+                elif (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(self.lasertime)).total_seconds() <TWO_MINUTES:#this elif just makes sure that once one sensor is out of the 60 second range but the other isnt, that it does not change the threat level
+                    return #return nothing
                 else:
-                    CURRENT_STATUS="Threat level 2, motion has been detected and so has sound please listen to most recent audio file"
-                    ahh.popupError("Threat level 2, motion and sound have been detected")
+                    CURRENT_STATUS="Threat level 2, motion has been detected and so has sound please listen to most recent audio file" #if both sensors have been tripped then update current status
+                    
                     try:
                         client.messages.create(to="+16475295580", 
                            from_="+14158554536", 
-                           body="Threat level 2, motion and sound have been detected")
+                           body="Threat level 2, motion and sound have been detected") #this will send an SMS notification
                     except:
                         print("sms failed to send")
+                    ahh.popupError("Threat level 2, motion and sound have been detected")  #will give a popup notification
+        #the following elif statement will check if both motion has been sensed and if the laser has been tripped and if both happened within the last 60 seconds           
         elif self.motiondetected == 1 and self.laserdetected==1 and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(self.motiontime)).total_seconds() <ONE_MINUTE and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(self.lasertime)).total_seconds() <ONE_MINUTE:
-                if( CURRENT_STATUS=="Threat level 2, motion has been detected and laser has been tripped"):
-                    return
+                if( CURRENT_STATUS=="Threat level 2, motion has been detected and laser has been tripped"): #this if just makes sure that notifications are not spammed
+                    return #return nothing
+                elif (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(self.soundtime)).total_seconds() <TWO_MINUTES:#this elif just makes sure that once one sensor is out of the 60 second range but the other isnt, that it does not change the threat level
+                    return #return nothing
                 else:
-                    CURRENT_STATUS="Threat level 2, motion has been detected and laser has been tripped"
-                    ahh.popupError("Threat level 2, motion has been detected and laser has been tripped")
+                    CURRENT_STATUS="Threat level 2, motion has been detected and laser has been tripped" #if both sensor have been tripped update current status
+                    
                     try:
                         client.messages.create(to="+16475295580", 
                            from_="+14158554536", 
-                           body="Threat level 2, motion has been detected and laser has been tripped")
+                           body="Threat level 2, motion has been detected and laser has been tripped") #this will send an SMS notification
                     except:
-                        print("sms failed to send")
+                        print("sms failed to send") #if sms failed to send print
+                    ahh.popupError("Threat level 2, motion has been detected and laser has been tripped") #will give a popup notification
+        #the following elif statement will check if sound has been sensed and if it was within the last 60 seconds            
         elif self.sounddetected==1 and(datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(self.soundtime)).total_seconds()<ONE_MINUTE:
-                if(CURRENT_STATUS=="Threat level 1, sound has been detected please listen to most recent audio file"):
-                    return
+                if(CURRENT_STATUS=="Threat level 1, sound has been detected please listen to most recent audio file"): #this if statement just makes sure that notifications are not spammed
+                    return #return nothing
+                #the following elif just makes sure that once one sensor is out of the 60 second range but the other isnt, that it does not change the threat level
+                elif (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(self.lasertime)).total_seconds() <TWO_MINUTES or (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(self.motiontime)).total_seconds() <TWO_MINUTES:
+                    return #return nothing
                 else:
-                    CURRENT_STATUS="Threat level 1, sound has been detected please listen to most recent audio file"
-                    ahh.popupError("Threat level 1, sound has been detected")
+                    CURRENT_STATUS="Threat level 1, sound has been detected please listen to most recent audio file" #if sound was sensed update current status
                     try:
                         client.messages.create(to="+16475295580", 
                            from_="+14158554536", 
-                           body="Threat level 1, sound has been detected")
+                           body="Threat level 1, sound has been detected") #this will send an SMS notification
                     except:
-                        print("sms failed to send")
-            
+                        print("sms failed to send") #if sms failed to send print
+                    ahh.popupError("Threat level 1, sound has been detected") #will give a popup notification
+                    
+        #the following elif statement will check if the tripwire has broken and if it was within the last 60 seconds
         elif self.laserdetected==1 and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(self.lasertime)).total_seconds() <ONE_MINUTE:
-                if(CURRENT_STATUS=="Threat level 1, tripwire has been broken"):
-                    return
+                if(CURRENT_STATUS=="Threat level 1, tripwire has been broken"): #this if statement just makes sure that notifications are not spammed
+                    return #return nothing
+                elif (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(self.motiontime)).total_seconds() <TWO_MINUTES or (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(self.soundtime)).total_seconds()<TWO_MINUTES:
+                    return #return nothing
                 else:
-                     CURRENT_STATUS="Threat level 1, tripwire has been broken"
-                     ahh.popupError("Threat level 1, tripwire has been broken")
+                     CURRENT_STATUS="Threat level 1, tripwire has been broken" #if tripwire was broken update current status
                      try:
                          client.messages.create(to="+16475295580", 
                            from_="+14158554536", 
-                           body="Threat level 1, tripwire has been broken")
+                           body="Threat level 1, tripwire has been broken") #this will send an SMS notification
                      except:
-                        print("sms failed to send")
-            
+                        print("sms failed to send") #if sms failed to send print
+                     ahh.popupError("Threat level 1, tripwire has been broken") #this will give a popup notification
+                    
+        #the following elif statement will check if motion has been detected and if it was within the last 60 seconds
         elif self.motiondetected==1 and (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(self.motiontime)).total_seconds() <ONE_MINUTE:
-                if(CURRENT_STATUS=="Threat level 1, motion has been detected"):
-                    return
+                if(CURRENT_STATUS=="Threat level 1, motion has been detected"): #this if statement just makesa sure that notifications are not spammed
+                    return #return nothing
+                #this elif just makes sure that once one sensor is out of the 60 second range but the other isnt, that it does not change the threat level
+                elif (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(self.lasertime)).total_seconds() <TWO_MINUTES or (datetime.datetime.utcnow().replace(tzinfo=pytz.utc)-parser.parse(self.soundtime)).total_seconds()<TWO_MINUTES:
+                    return #return nothing
+                
                 else:
-                    CURRENT_STATUS="Threat level 1, motion has been detected"
-                    ahh.popupError("Threat level 1, motion has been detected")
+                    CURRENT_STATUS="Threat level 1, motion has been detected" #if motion has been detected update current status
                     try:
                         client.messages.create(to="+16475295580", 
                            from_="+14158554536", 
-                           body="Threat level 1, motion has been detected")
+                           body="Threat level 1, motion has been detected") #this will send an SMS notification
                     except:
-                        print("sms failed to send")
-        else:
+                        print("sms failed to send") #if sms failed to send print
+                    ahh.popupError("Threat level 1, motion has been detected") #this will give a popup notification
+                    
+        else: #if no sensor activity then enter this else statement
                if(CURRENT_STATUS != "Safe"):
-                   time.sleep(60)
+                   time.sleep(60) #this is to make sure that it does not say safe too early
                    CURRENT_STATUS = "Safe"
                else:
-                   CURRENT_STATUS ="Safe"
-                    
-    
+                   CURRENT_STATUS ="Safe" #if no sensors have been tripped within the last 60 seconds then update current status to safe
+                  
+    #def read_sound_thingspeak, this method will read the sensor data from thingspeak and save the sensor status and its corresponding time and will the put it in the database
+    #@param self, this is to be able to use variables associated with this object
     def read_sound_thingspeak(self):
-        '''The following code reads if the sound sensor has been triggered and stores that time in an array, it also stores the time
-            it happened at in another array'''
-        #global sounddetected
-        #global soundtime
-        db_path = '/home/pi/Desktop/Sysc3010/Project/sensordata.db'
-        conn = sqlite3.connect(db_path)
+        db_path = '/home/pi/Desktop/Sysc3010/Project/sensordata.db' #this is the database path
+        conn = sqlite3.connect(db_path) #connect to the database
         c = conn.cursor()
-        soundURL='https://api.thingspeak.com/channels/1152850/fields/1.json?api_keys='
-        soundKEY='8T5J8V8E0LX16RY5'
-        soundHEADER='&results=1' 
-        sound_FULL=soundURL+soundKEY+soundHEADER
+        soundURL='https://api.thingspeak.com/channels/1152850/fields/1.json?api_keys=' #thingspeak url for soundsensor channel
+        soundKEY='8T5J8V8E0LX16RY5' #read api key for channel
+        soundHEADER='&results=1'  #we want the most recent result that was written to the channel
+        sound_FULL=soundURL+soundKEY+soundHEADER #combine to be able to get the data
         soundresults=requests.get(sound_FULL).json()
-        soundURL2='https://api.thingspeak.com/channels/1152850/fields/2.json?api_keys='
-        soundKEY2='8T5J8V8E0LX16RY5'
-        soundHEADER2='&results=1' 
-        sound_FULL2=soundURL2+soundKEY2+soundHEADER2
-        soundresults2=requests.get(sound_FULL2).json()
-        data=[]
+        data=[]#create an array to store results
         try:
-            for x in soundresults['feeds']:
-                data.insert(0,int(x['field1']))
-                self.sounddetected = data[0]
-            for x in soundresults2['feeds']:
-                data.insert(1,str(x['created_at']))
-                self.soundtime=data[1]
+            for x in soundresults['feeds']: #look in the feeds of the json
+                data.insert(0,int(x['field1'])) #put the field 1 value into the first element of the array data
+                self.sounddetected = data[0] #make this value equal to self.sounddetected
+            for x in soundresults['feeds']: #look in the feeds of the json
+                data.insert(1,str(x['created_at'])) #put the created_at value into the second element of the array data
+                self.soundtime=data[1] #make this value equal to self.soundtime
         except:
-            print("failed to read from SoundSensor Thingspeak")
+            print("failed to read from SoundSensor Thingspeak") #if connection/reading with thingspeak failed, print this
         try:
-            sql = "SELECT * FROM soundsensordata ORDER BY soundtime DESC LIMIT 1"
+            sql = "SELECT * FROM soundsensordata ORDER BY soundtime DESC LIMIT 1" #select data from soundsensordata in order
             recs = c.execute(sql)
             if True:
                 for row in recs:
                  
                 
-                     if row != (1, self.soundtime):    
-                            c.execute("""INSERT INTO soundsensordata VALUES(?,?)""",
-                                    (self.sounddetected,self.soundtime))
+                     if row != (1, self.soundtime):    #to avoid duplicate values in table
+                            c.execute("""INSERT INTO soundsensordata VALUES(?,?)""", 
+                                    (self.sounddetected,self.soundtime)) #insert values into chart
                 conn.commit() #commit needed
         except:
-            ("Failed to insert into soundsensordata table")
-        c.close()
-    
+            ("Failed to insert into soundsensordata table") #if insert into table failed then print this
+        c.close() #close database 
+    #def read_laser_thingspeak, this method will read the sensor data from thingspeak and save the sensor status and its corresponding time and will the put it in the database
+    #@param self, this is to be able to use variables associated with this object
     def read_laser_thingspeak(self):
-        '''The following code reads if the laser tripwire sensor has been triggered and stores that time in an array, it also stores the time
-        it happened at in another array'''
-        #global self.laserdetected
-        db_path = '/home/pi/Desktop/Sysc3010/Project/sensordata.db'
-        conn = sqlite3.connect(db_path)
+        
+        db_path = '/home/pi/Desktop/Sysc3010/Project/sensordata.db' #get the database we want
+        conn = sqlite3.connect(db_path) #connect to the database
         c = conn.cursor()
-        laserKEY='QEAI32EFVL4ZM7ZR'
-        laserURL= 'https://api.thingspeak.com/channels/1150122/fields/1.json?api_key='
-        laserHEADER ='&results=1'
+        laserKEY='QEAI32EFVL4ZM7ZR' #read api key for laser tripwire channel
+        laserURL= 'https://api.thingspeak.com/channels/1150122/fields/1.json?api_key=' #url for the thingspeak channel
+        laserHEADER ='&results=1' #we want this most recent data point that has been written to channel
         laser_FULL = laserURL+laserKEY+laserHEADER
         laserresults=requests.get(laser_FULL).json()
-        data2=[]
+        data2=[] #array to store the data
         try:
-            for x in laserresults['feeds']:
-                data2.insert(0,int(x['field1']))
-                self.laserdetected = data2[0]
-            for x in laserresults['feeds']:
-                data2.insert(1,str(x['created_at']))
-                self.lasertime=data2[1]
+            for x in laserresults['feeds']: #look in the feeds of the json
+                data2.insert(0,int(x['field1'])) #insert field1 into the array at the first element
+                self.laserdetected = data2[0] #make this value equal to self.laserdetected
+            for x in laserresults['feeds']: #look in the feeds of the json
+                data2.insert(1,str(x['created_at'])) #insert created_at into the array at the second element
+                self.lasertime=data2[1] #make this value equal to self.lasertime
         except:
-            print("failed to read from laser tripwire Thingspeak")
+            print("failed to read from laser tripwire Thingspeak") #if connection or read with thingspeak failed, then print this
         try:
-            sql = "SELECT * FROM lasersensordata ORDER BY lasertime DESC LIMIT 1"
+            sql = "SELECT * FROM lasersensordata ORDER BY lasertime DESC LIMIT 1" #select data from lasersensordata in order
             recs = c.execute(sql)
             if True:
                 for row in recs:
                  
-                     if row != (1, self.lasertime ):    
+                     if row != (1, self.lasertime ):    #this is to avoid duplicate values in chart
                             c.execute("""INSERT INTO lasersensordata VALUES(?,?)""",
-                                  (self.laserdetected,self.lasertime))
+                                  (self.laserdetected,self.lasertime)) #insert values into lasersensordata table
                 conn.commit() #commit needed
         except:
-            print("failed to isnert into lasersensordata table")
-        c.close()
+            print("failed to insert into lasersensordata table") #if insertion into table failed, then print this
+        c.close() #close database
+        
+    #def read_motion_thingspeak, this method will read the sensor data from thingspeak and save the sensor status and its corresponding time and will the put it in the database
+    #@param self, this is to be able to use variables associated with this object    
     def read_motion_thingspeak(self):
-        '''The following code reads if the motion sensor has been triggered and stores that time in an array, it also stores the time
-        it happened at in another array'''
-        #global motiondetected
-        #global motiontime
-        db_path = '/home/pi/Desktop/Sysc3010/Project/sensordata.db'
-        conn = sqlite3.connect(db_path)
+        
+        db_path = '/home/pi/Desktop/Sysc3010/Project/sensordata.db' #this is the database we want to connect to
+        conn = sqlite3.connect(db_path) #connect to this database
         c = conn.cursor()
-        motionURL='https://api.thingspeak.com/channels/1219425/fields/1.json?api_key='
-        motionKEY='GQ6EDK3P60AS7YLO'
-        motionHEADER='&results=1'
+        motionURL='https://api.thingspeak.com/channels/1219425/fields/1.json?api_key=' #url for the motion sensor thingspeak channel
+        motionKEY='GQ6EDK3P60AS7YLO' #read api key for this channel
+        motionHEADER='&results=1' #we want the most recent data point written to this channel
         motion_FULL=motionURL+motionKEY+motionHEADER
         motionresults=requests.get(motion_FULL).json()
-        data3=[]
+        data3=[] #creat array to store values
         try:
-            for x in motionresults['feeds']:
-                data3.insert(0,int(x['field1']))
-                self.motiondetected=data3[0]
-            for x in motionresults['feeds']:
-                data3.insert(1,str(x['created_at']))
-                self.motiontime=data3[1]
+            for x in motionresults['feeds']: #look into the feeds of motionresults
+                data3.insert(0,int(x['field1'])) #insert field1 value into array at the first element
+                self.motiondetected=data3[0] #make this value equal to self.motiondetected
+            for x in motionresults['feeds']: #look into the feeds of motionresult
+                data3.insert(1,str(x['created_at'])) #insert created_at value into array at the second element
+                self.motiontime=data3[1] #make this value equal to self.motiondeteceted
         except:
-            print("failed to read from motion Thingspeak")
+            print("failed to read from motion Thingspeak") #if connection/read with thingspeak failed, print this
         try:
-            sql = "SELECT * FROM motionsensordata ORDER BY motiontime DESC LIMIT 1"
+            sql = "SELECT * FROM motionsensordata ORDER BY motiontime DESC LIMIT 1" #select data from motionsensordata in order
             recs = c.execute(sql)
             if True:
                 for row in recs:
                 
-                     if row != (1, self.motiontime ):
+                     if row != (1, self.motiontime ): #this is to avoid duplicate data in the table
                             c.execute("""INSERT INTO motionsensordata VALUES(?,?)""",
-                                  (self.motiondetected,self.motiontime))
+                                  (self.motiondetected,self.motiontime)) #insert data into table
                 conn.commit() #commit needed
         except:
-            print("failed to insert into motionsensordata table")
-        c.close()
-ahh=SecurityPage
-ah=threatdetect()
-app = AlphaSecurity()
-app.title("Security System Control Console")
-app.after(5000,ah.determinethreat)
-app.mainloop()
+            print("failed to insert into motionsensordata table") #if insertion into table failed, print this
+        c.close() #close database
+ahh=SecurityPage #create object ahh
+ah=threatdetect() #create object ah
+app = AlphaSecurity() #create object app
+app.title("Security System Control Console") #give GUI a title
+app.after(5000,ah.determinethreat) #run determinethreat after 5 seconds
+app.mainloop() 
