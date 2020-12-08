@@ -1,3 +1,10 @@
+//Alpha Security
+//SYSC 3010
+//Riley Johnston
+
+//This activity handles the user login
+//From this activity, the user has the option to switch to the Register New User page
+
 package net.smallacademy.authenticatorapp;
 
 import android.content.DialogInterface;
@@ -43,11 +50,11 @@ public class Login extends AppCompatActivity {
         mCreateBtn = findViewById(R.id.createText);
         forgotTextLink = findViewById(R.id.forgotPassword);
 
-
+        //Login selected
         mLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                //Ensure that valid username and password were provided
                 String email = mEmail.getText().toString().trim();
                 String password = mPassword.getText().toString().trim();
 
@@ -68,8 +75,7 @@ public class Login extends AppCompatActivity {
 
                 progressBar.setVisibility(View.VISIBLE);
 
-                // authenticate the user
-
+                // authenticate the user with Google Firebase
                 fAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -87,6 +93,7 @@ public class Login extends AppCompatActivity {
             }
         });
 
+        //Switch to Register New User activity
         mCreateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,6 +101,7 @@ public class Login extends AppCompatActivity {
             }
         });
 
+        //Reset password by entering your email
         forgotTextLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,7 +128,6 @@ public class Login extends AppCompatActivity {
                                 Toast.makeText(Login.this, "Error ! Reset Link is Not Sent" + e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
-
                     }
                 });
 
@@ -130,9 +137,7 @@ public class Login extends AppCompatActivity {
                         // close the dialog
                     }
                 });
-
                 passwordResetDialog.create().show();
-
             }
         });
 

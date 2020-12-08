@@ -1,3 +1,9 @@
+//Alpha Security
+//SYSC 3010
+//Riley Johnston
+
+//This activity contains an embedded video which streams video from AWS using HLS method
+
 package net.smallacademy.authenticatorapp;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,9 +20,11 @@ public class VideoStream extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_stream);
         WebView myWebView = (WebView) findViewById(R.id.videoStream);
+        //Open local file index.html in a browser
         myWebView.loadUrl("file:///android_asset/index.html");
         myWebView.getSettings().setJavaScriptEnabled(true);
 
+        //If the back arrow is selected, return to main page
         findViewById(R.id.backArrow).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -24,7 +32,4 @@ public class VideoStream extends AppCompatActivity {
             }
         });
     }
-
-
-
 }

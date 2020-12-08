@@ -1,20 +1,6 @@
- Volume in drive C has no label.
- Volume Serial Number is 585A-4B46
-
- Directory of C:\Users\riley\OneDrive - Carleton University\Documents\Riley\Carleton Fall 2020\SYSC 3010\SYSC3010_L2_M12\AlphaSecurityApp
-
-2020-11-15  12:33 PM    <DIR>          .
-2020-11-15  12:33 PM    <DIR>          ..
-2020-11-15  09:36 AM               222 .gitignore
-2020-11-15  12:32 PM    <DIR>          .gradle
-2020-11-16  02:29 PM    <DIR>          .idea
-2020-11-15  12:33 PM    <DIR>          app
-2020-11-15  10:44 AM               611 build.gradle
-2020-11-15  12:33 PM    <DIR>          gradle
-2020-11-15  09:36 AM             1,089 gradle.properties
-2020-11-15  09:36 AM             5,296 gradlew
-2020-11-15  09:36 AM             2,260 gradlew.bat
-2020-11-15  09:36 AM               458 local.properties
-2020-11-15  09:36 AM                53 settings.gradle
-               7 File(s)          9,989 bytes
-               6 Dir(s)  160,616,312,832 bytes free
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
+  </component>
+</project>
