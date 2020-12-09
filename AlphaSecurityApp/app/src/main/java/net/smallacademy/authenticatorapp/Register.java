@@ -1,3 +1,10 @@
+//Alpha Security
+//SYSC 3010
+//Riley Johnston --> Firebase connection and Authentication adapted from tutorial: https://smallacademy.co/blog/android/login-register-using-firebase/
+
+//This activity is used to register a new account
+//Credentials are stored in Google Firebase
+
 package net.smallacademy.authenticatorapp;
 
 import android.content.Intent;
@@ -21,7 +28,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,7 +61,7 @@ public class Register extends AppCompatActivity {
             finish();
         }
 
-
+        //Perform registration
         mRegisterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,6 +70,7 @@ public class Register extends AppCompatActivity {
                 final String fullName = mFullName.getText().toString();
                 final String phone    = mPhone.getText().toString();
 
+                //Ensure that valid credentials were supplied
                 if(TextUtils.isEmpty(email)){
                     mEmail.setError("Email is Required.");
                     return;
@@ -82,14 +89,12 @@ public class Register extends AppCompatActivity {
                 progressBar.setVisibility(View.VISIBLE);
 
                 // register the user in firebase
-
                 fAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
 
                             // send verification link
-
                             FirebaseUser fuser = fAuth.getCurrentUser();
                             fuser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -121,7 +126,7 @@ public class Register extends AppCompatActivity {
         });
 
 
-
+        //Go to Login activity
         mLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

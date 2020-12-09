@@ -1,9 +1,10 @@
 //Alpha Security
 //SYSC 3010
-//Riley Johnston
+//Riley Johnston --> Firebase connection and Authentication adapted from tutorial: https://smallacademy.co/blog/android/login-register-using-firebase/
 
 //This activity handles the user login
 //From this activity, the user has the option to switch to the Register New User page
+//Adapted from 
 
 package net.smallacademy.authenticatorapp;
 
