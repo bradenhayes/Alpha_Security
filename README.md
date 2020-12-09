@@ -13,9 +13,9 @@ The system is designed modularly with high levels of cohesion and low levels of 
 
 ## Requirements
 To run run the full system, you will need:
--> Android device		
--> Raspberry Pi Computers	
--> Windows or Linux PC		
+- Android device		
+- Raspberry Pi Computers	
+- Windows or Linux PC		
 
 The android application may be run on any number of phones concurrently.  The GUI may be run on any number of PC's.  The number of Raspbery Pi computers must be enough to support the sensors used (currently, the system supports a motion sensor, laser tripwire and sound sensor).  
 
