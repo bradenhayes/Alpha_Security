@@ -9,11 +9,21 @@ Our system allows for additional sensors to be added as they are all controlled 
 
 The security system allows users to monitor their house from anywhere with the Alpha Security app. Along with this, the 4th raspberry pi will be the server for the security system which will work on a monitor with Alpha Security’s very own desktop GUI.
 
+The system is designed modularly with high levels of cohesion and low levels of coupling so as to promote scalability and to be easily customizable to the customers' needs.  
+
+## Requirements
+To run run the full system, you will need:
+-> Android device		
+-> Raspberry Pi Computers	
+-> Windows or Linux PC		
+
+The android application may be run on any number of phones concurrently.  The GUI may be run on any number of PC's.  The number of Raspbery Pi computers must be enough to support the sensors used (currently, the system supports a motion sensor, laser tripwire and sound sensor).  
 
 ## Desciption of the major code components
 
 ### Android Application (AlphaSecurityApp)
 The andriod app allows a homeowner to remotely monitor their residence(s).  When a breakin is detected (one or more sensors triggered), the homeowner is notified of the situation by an SMS message.  He may then open the AlphaSecurity app and, onced logged in, watch the live stream through the security camera.  
+
 Google Firebase is used for account authorization.  New users may be registered through the application.   
 
 ### Desktop Application (GUI)
