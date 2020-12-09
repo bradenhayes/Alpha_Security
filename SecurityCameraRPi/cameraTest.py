@@ -1,6 +1,6 @@
 #Alpha Security
 #SYSC 3010
-#Riley Johnston 101088019
+#Riley Johnston
 
 #Hardware Test
 #This script validates that the raspberry pi camera is connected properly and is operational

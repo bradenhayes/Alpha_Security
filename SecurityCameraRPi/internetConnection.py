@@ -1,6 +1,6 @@
 #Alpha Security
 #SYSC 3010
-#Riley Johnston 101088019
+#Riley Johnston
 
 #This script streams video to AWS while internet connection is available
 #When internet connection is unavailable, video files are saved to local SD card storage

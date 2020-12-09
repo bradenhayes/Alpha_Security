@@ -1,6 +1,6 @@
 #Alpha Security
 #SYSC 3010
-#Riley Johnston 101088019
+#Riley Johnston
 
 #Software Test
 #Validate the functionality of internetConnection.py

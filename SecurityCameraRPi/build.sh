@@ -1,3 +1,7 @@
+# Alpha Security
+# SYSC 3010
+# Riley Johnston
+
 # Run this script after cloning SecurityCameraRPi to install dependancies and build the code
 
 # Helpful links:
