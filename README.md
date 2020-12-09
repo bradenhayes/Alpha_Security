@@ -31,10 +31,17 @@ the 4th raspberry pi will be the server for the security system which will work 
 
 
 ### Sensor controlling scripts and unit tests (Project)
+The system currently supports a sound sensor, motion sensor and laser tripwire.  The sensors are connected to Raspberry Pi computers and controlled by Python scripts.  When a sensor is tripped (e.g. the sound sensor detects noise within a certain range of frequency and amplitude) a signal is sent to a Thingspeak channel.  The data packets sent to Thingspeak will be used to identify threat levels and notify the homeowner of a potential threat.  
 
+Unit tests for each hardware unit may be used to validate the functionality of hardware units individually.
 
 ### Video Stream Producer (SecurityCameraRPi)
-
 Security camera video stream is uploaded to AWS from the RPi controlling the camera.  This is implemented by two concurrently executing Python processes.  The first process streams footage to AWS.  The second process pings google every 2 seconds.  As long as internet is available it allows the streaming to continue.  If at any point, it detects that the internet is down, it terminates the process that streams to AWS, and instead begins recording MP4 video and storing it locally.  Every two seconds, it continues checking network connection, and if at any point the connection is re-established, it relaunches the process that streams to AWS.  This way a homeowner can go back and review footage from when the internet was down.
 
 A gstreamer pipeline is set up by the build script to transfer video frames from the camera to to the kvssink element (also set up by the build script) to deliver video fragments to AWS using the Kinesis SDK (code for SDK cloned from git in build script).
+
+## Contributers
+Braden Hayes
+Riley Johnston
+James Runtas
+Malcolm McGillivray
