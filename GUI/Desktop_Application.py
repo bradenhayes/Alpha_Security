@@ -411,7 +411,7 @@ class threatdetect:
                     CURRENT_STATUS= "Threat level 3, all sensors tripped" # all sensors have indeed been tripped
                     
                     try:
-                        client.messages.create(to="+16475295580", 
+                        client.messages.create(to="your number", 
                            from_="+14158554536", 
                            body="Threat level 3, all sensors tripped") #this will send a text message notification if all sensos have been tripped
                     except:
@@ -428,7 +428,7 @@ class threatdetect:
                     CURRENT_STATUS= "Threat level 2,laser has been broken and sound has been detected too please listen to most recent audio file" #if both the sensors have been tripped then update current status
                     
                     try:
-                        client.messages.create(to="+16475295580", 
+                        client.messages.create(to="your number", 
                            from_="+14158554536", 
                            body="Threat level 2, laser has been broken and sound has been detected") #this will send an SMS notification 
                     except:
@@ -444,7 +444,7 @@ class threatdetect:
                     CURRENT_STATUS="Threat level 2, motion has been detected and so has sound please listen to most recent audio file" #if both sensors have been tripped then update current status
                     
                     try:
-                        client.messages.create(to="+16475295580", 
+                        client.messages.create(to="your number", 
                            from_="+14158554536", 
                            body="Threat level 2, motion and sound have been detected") #this will send an SMS notification
                     except:
@@ -460,7 +460,7 @@ class threatdetect:
                     CURRENT_STATUS="Threat level 2, motion has been detected and laser has been tripped" #if both sensor have been tripped update current status
                     
                     try:
-                        client.messages.create(to="+16475295580", 
+                        client.messages.create(to="your number", 
                            from_="+14158554536", 
                            body="Threat level 2, motion has been detected and laser has been tripped") #this will send an SMS notification
                     except:
@@ -476,7 +476,7 @@ class threatdetect:
                 else:
                     CURRENT_STATUS="Threat level 1, sound has been detected please listen to most recent audio file" #if sound was sensed update current status
                     try:
-                        client.messages.create(to="+16475295580", 
+                        client.messages.create(to="your number", 
                            from_="+14158554536", 
                            body="Threat level 1, sound has been detected") #this will send an SMS notification
                     except:
@@ -492,7 +492,7 @@ class threatdetect:
                 else:
                      CURRENT_STATUS="Threat level 1, tripwire has been broken" #if tripwire was broken update current status
                      try:
-                         client.messages.create(to="+16475295580", 
+                         client.messages.create(to="your number", 
                            from_="+14158554536", 
                            body="Threat level 1, tripwire has been broken") #this will send an SMS notification
                      except:
@@ -510,7 +510,7 @@ class threatdetect:
                 else:
                     CURRENT_STATUS="Threat level 1, motion has been detected" #if motion has been detected update current status
                     try:
-                        client.messages.create(to="+16475295580", 
+                        client.messages.create(to="your number", 
                            from_="+14158554536", 
                            body="Threat level 1, motion has been detected") #this will send an SMS notification
                     except:
