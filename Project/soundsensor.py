@@ -18,8 +18,8 @@ except ImportError:
 
 
 
-      
-key = "H9WE4FP198D1A2M9"  #Thingspeak API write key
+timeah='i' #used incase there are 2 recordings saved with the same name      
+key = "H9WE4FP198D1A2M9"  # Thingspeak API write key
 fs = 44100  # Sample rate
 testduration=1 #length of test recording
 duration =5 #Length of recording
@@ -63,7 +63,7 @@ def record():
     and then will write the sensor data to thingspeak
         @param channel, this is the GPIO pin that is used'''
 def callback(channel):
-        timeah='i' #used incase there are 2 recordings saved with the same name
+        global timeah
         if GPIO.input(channel): #if input
                 channel =17 #channel is 17
         else:
