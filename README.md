@@ -1,4 +1,4 @@
-# SYSC3010_L2_M12
+# Alpha Security
 
 ## Overview of Alpha Security
 The Alpha Security Security System provides remote monitoring of a residence
