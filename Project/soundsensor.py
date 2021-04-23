@@ -19,7 +19,7 @@ except ImportError:
 
 
 timeah='i' #used incase there are 2 recordings saved with the same name      
-key = "H9WE4FP198D1A2M9"  # Thingspeak API write key
+key = "xxxxxxxxxxxxx"  # Thingspeak API write key
 fs = 44100  # Sample rate
 testduration=1 #length of test recording
 duration =5 #Length of recording
