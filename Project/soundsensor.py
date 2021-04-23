@@ -24,7 +24,7 @@ fs = 44100  # Sample rate
 testduration=1 #length of test recording
 duration =5 #Length of recording
 myrecordings=[] #array used for insert of audio recordings
-dbx = dropbox.Dropbox('Tf6ZkhYdVW0AAAAAAAAAASbGkKs9SB5BxP2k4ZeYnzgIzlpIiUBkMhpVWu3J-coB') #dropbox API key
+dbx = dropbox.Dropbox('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx') #dropbox API key
 dbx.users_get_current_account() 
 
 #GPIO SETUP
