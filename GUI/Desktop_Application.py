@@ -30,7 +30,7 @@ LARGE_FONT= ("Verdana", 12) #font used throughout GUI
 ONE_MINUTE=60 #used to compare the time the sensors are tripped to the current time (60 seconds/1 minute)
 TWO_MINUTES=120 #used for comparing time to sensors that are tripped  (120 seconds/2 minutes)
 CURRENT_STATUS="Safe" #current status of the secruity system
-client = Client("ACc5accf5415ccf8712a3bd81278c7e57b", "8fa188fa711e78ce76ce8944efb86af9") #used to connect to Twilio API to send SMS messages
+client = Client("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxx") #used to connect to Twilio API to send SMS messages
 
 
 '''class AlphaSecuirty, for actually defining the GUI and making the frame, organizes and initializes all of the different pages
